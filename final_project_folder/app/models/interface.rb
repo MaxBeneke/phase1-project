@@ -106,7 +106,27 @@ class Interface
         end
       open_court = prompt.yes?("Would you like to allow other users to join your reservation?")
       Reservation.create(user_id: self.user.id, court_id: court_number, open_court: open_court)
-     end
+    end
+
+    def reservation_joiner
+    
+    joinable_court = Reservation.where.not({open_court: false, user_id: self.user.id}) 
+    binding.pry
+    if joinable_court == nil
+        puts "Sorry there are no courts available to join."
+        reservation_screen
+    end
+    
+   joined_court = prompt.select("Open courts") do |menu|
+        joinable_court.each do |reservation| 
+            menu.choice "Court #{reservation.court_id} ------ User: #{reservation.user.username}", reservation
+        end
+       
+    end 
+    joined_court.update(open_court: false)
+    puts "Should be able to join reservation"
+    end
+
 
 
 
