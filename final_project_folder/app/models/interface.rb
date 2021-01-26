@@ -140,20 +140,23 @@ class Interface
         closed_court = "This court is closed to other users"
         self.user.reservations.each do |reservation| 
             puts "Court: #{reservation.court_id} ------ #{reservation.open_court ? open_court : closed_court}"
-        end
+            end
 
         prompt.select("") do |menu|
-            menu.choice "Update reservations", -> {updated_reservations}
+            menu.choice "Update/Delete reservations", -> {update_reservations}
             menu.choice "Go back", -> {reservation_screen}
         end
-        
-        def updated_reservations
-
         end
-    
 
-
-    end
+        def update_reservations
+            open_court = "This court is open to other users"
+            closed_court = "This court is closed to other users"
+                prompt.select("----)") do |menu|
+                    self.user.reservations.each do |reservation|
+                    menu.choice "Court: #{reservation.court_id} ------ #{reservation.open_court ? open_court : closed_court}"
+                    end
+                end
+            end
         
 
 
