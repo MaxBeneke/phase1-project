@@ -17,8 +17,8 @@ court2 = Court.create(name: "Court 2")
 court3 = Court.create(name: "Court 3")
 court4 = Court.create(name: "Court 4")
 
-reservation_1 = Reservation.create(user_id: user1.id, court_id: court1.id, open_court: false)
-reservation_2 = Reservation.create(user_id: user2.id, court_id: court2.id, open_court: true)
+reservation1 = Reservation.create(user_id: user1.id, court_id: court1.id, open_court: false)
+reservation2 = Reservation.create(user_id: user2.id, court_id: court2.id, open_court: true)
 
 
 # # THIS SEED FILE NEEDS TO BE ENTIRELY REPLACED -- I'M LEAVING CODE FOR YOUR REFERENCE ONLY!
