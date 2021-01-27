@@ -9,7 +9,6 @@ class Interface
 
     def welcome
         system 'clear'
-        self.user.reload
 
         prompt.select("Welcome to CourtReserver! What would you like to do?") do |menu|
             menu.choice "Login", -> {user_login_helper}
@@ -29,7 +28,7 @@ class Interface
 
     def user_login_helper
         system 'clear'
-        self.user.reload
+        
       username = prompt.ask("Enter username: ")
       password = prompt.ask("Enter password: ")
 
