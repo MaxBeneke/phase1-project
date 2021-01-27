@@ -104,33 +104,30 @@ class Interface
 
     def reservation_joiner
     
-    joinable_court = Reservation.where.not({open_court: false, user_id: self.user.id}) 
+        joinable_court = Reservation.where.not({open_court: false, user_id: self.user.id}) 
       
-    if joinable_court == []
+        if joinable_court == []
         puts "Sorry there are no courts available to join."
         sleep(1.0)
         reservation_screen
-    end
-    
-   joined_court = prompt.select("Open courts") do |menu|
-        joinable_court.each do |reservation| 
-            menu.choice "Court #{reservation.court_id} ------ User: #{reservation.user.username}", reservation
         end
-       menu.choice "Go back", -> {reservation_screen}
+    
+        joined_court = prompt.select("Open courts") do |menu|
+            joinable_court.each do |reservation| 
+                menu.choice "Court #{reservation.court_id} ------ User: #{reservation.user.username}", reservation
+            end
+            menu.choice "Go back", -> {reservation_screen}
 
 
-    end 
+         end 
 
-    joined_court.update(open_court: false)
-    puts "Should be able to join reservation"
+        joined_court.update(open_court: false)
+        puts "Should be able to join reservation"
     end
-
-
-
 
 
     def reservation_checker
-       if self.user.reservations.count != 1
+        if self.user.reservations.count != 1
         puts "You have #{self.user.reservations.count} reservations." 
             else puts "You have 1 reservation."
         end
@@ -143,7 +140,8 @@ class Interface
             end
 
         prompt.select("") do |menu|
-            menu.choice "Update/Delete reservations", -> {update_reservations}
+            menu.choice "Update reservations", -> {update_reservations}
+            menu.choice "Delete reservations", -> {delete_reservations}
             menu.choice "Go back", -> {reservation_screen}
         end
         end
@@ -155,17 +153,17 @@ class Interface
                     self.user.reservations.each do |reservation|
                     menu.choice "Court: #{reservation.court_id} ------ #{reservation.open_court ? open_court : closed_court}", reservation
                     end
-                    binding.pry
                 end
-            prompt.select("Your reservation at court #{updatable_reservation.court_id} is currently 
-            #{updatable_reservation.open_court ? "open" : "closed"} to other users.") do |menu|
-                menu.choice "Change court status(open/closed)", -> {!updatable_reservation.open_court}
-                menu.choice "Delete reservation", -> {updatable_reservation.destroy}
-                menu.choice "Go back", -> {reservation_checker}
-                reservation_checker
-        
-        end
 
-         end
+            update = prompt.yes?("Your reservation at court #{updatable_reservation.court_id} is currently #{updatable_reservation.open_court ? "open" : "closed"} to other users. Would you like to change it?")
+            
+            if update 
+                updatable_reservation.open_court ? updatable_reservation.update(open_court: false) : updatable_reservation.update(open_court: true)
+            end
+            reservation_checker 
+        
+        
+
+        end
 
 end
