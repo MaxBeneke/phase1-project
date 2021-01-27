@@ -8,6 +8,9 @@ class Interface
     end
 
     def welcome
+        system 'clear'
+        self.user.reload
+
         prompt.select("Welcome to CourtReserver! What would you like to do?") do |menu|
             menu.choice "Login", -> {user_login_helper}
             menu.choice "Sign up", -> {user_sign_up_helper}
@@ -25,6 +28,8 @@ class Interface
     end
 
     def user_login_helper
+        system 'clear'
+        self.user.reload
       username = prompt.ask("Enter username: ")
       password = prompt.ask("Enter password: ")
 
@@ -50,6 +55,8 @@ class Interface
     end
 
     def user_sign_up_helper
+        system 'clear'
+        self.user.reload
         username = prompt.ask("Enter username: ")
        while User.find_by(username: username)
             puts "This username is already taken."
@@ -81,6 +88,8 @@ class Interface
     end
 
     def reservation_screen
+        system 'clear'
+        self.user.reload
         prompt.select("What would you like to do?") do |menu|
             menu.choice "Make a reservation", -> {reservation_creator}
             menu.choice "Join a existing reservation", -> {reservation_joiner}
@@ -91,6 +100,8 @@ class Interface
     end
     
     def reservation_creator
+        system 'clear'
+        self.user.reload
         court_number = prompt.select("Choose a court") do |menu|
             menu.choice "Court 1", 1
             menu.choice "Court 2", 2
@@ -103,6 +114,8 @@ class Interface
     end
 
     def reservation_joiner
+        system 'clear'
+        self.user.reload
     
         joinable_court = Reservation.where.not({open_court: false, user_id: self.user.id}) 
       
@@ -127,6 +140,8 @@ class Interface
 
 
     def reservation_checker
+        system 'clear'
+        self.user.reload
         if self.user.reservations.count != 1
         puts "You have #{self.user.reservations.count} reservations." 
             else puts "You have 1 reservation."
@@ -147,6 +162,8 @@ class Interface
         end
 
         def update_reservations
+            system 'clear'
+            self.user.reload
             open_court = "This court is open to other users"
             closed_court = "This court is closed to other users"
             updatable_reservation =  prompt.select("----") do |menu|
@@ -164,6 +181,8 @@ class Interface
          end
          
          def delete_reservations
+            system 'clear'
+            self.user.reload
             if self.user.reservations == []
                 puts "Sorry you have no current reservations."
                 sleep(1.5)
@@ -178,10 +197,14 @@ class Interface
                 end  
             end
            
-            delete = prompt.yes?("Your reservation at court #{deletable_reservation.court_id} will be deleted #{deletable_reservation.open_court ? "open" : "closed"} Would you like to delete it")
+            delete = prompt.yes?("Your reservation at court #{deletable_reservation.court_id} will be deleted. Would you like to delete it?")
 
            if delete
+            id = deletable_reservation.court_id
                 deletable_reservation.destroy
+                puts " You're reservation for court #{id} has been deleted."
             end
+            sleep(1.0)
+            reservation_screen
         end
 end
