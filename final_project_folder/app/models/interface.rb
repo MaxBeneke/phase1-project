@@ -151,16 +151,21 @@ class Interface
         def update_reservations
             open_court = "This court is open to other users"
             closed_court = "This court is closed to other users"
-                prompt.select("----)") do |menu|
+            updatable_reservation =  prompt.select("----") do |menu|
                     self.user.reservations.each do |reservation|
-                    menu.choice "Court: #{reservation.court_id} ------ #{reservation.open_court ? open_court : closed_court}"
+                    menu.choice "Court: #{reservation.court_id} ------ #{reservation.open_court ? open_court : closed_court}", reservation
                     end
+                    binding.pry
                 end
-            end
+            prompt.select("Your reservation at court #{updatable_reservation.court_id} is currently 
+            #{updatable_reservation.open_court ? "open" : "closed"} to other users.") do |menu|
+                menu.choice "Change court status(open/closed)", -> {!updatable_reservation.open_court}
+                menu.choice "Delete reservation", -> {updatable_reservation.destroy}
+                menu.choice "Go back", -> {reservation_checker}
+                reservation_checker
         
+        end
 
-
-
-
+         end
 
 end
