@@ -160,10 +160,28 @@ class Interface
             if update 
                 updatable_reservation.open_court ? updatable_reservation.update(open_court: false) : updatable_reservation.update(open_court: true)
             end
-            reservation_checker 
-        
-        
+            reservation_checker
+         end
+         
+         def delete_reservations
+            if self.user.reservations == []
+                puts "Sorry you have no current reservations."
+                sleep(1.5)
+                reservation_checker
+            end
+            open_court = "Delete this reservation."
+            closed_court = "Delete this reservation."
 
+           deletable_reservation = prompt.select("----") do |menu|
+            self.user.reservations.each do |reservation|
+                menu.choice "Delete reservation #{reservation.court_id} ------ #{reservation.open_court ? open_court : closed_court}", reservation
+                end  
+            end
+           
+            delete = prompt.yes?("Your reservation at court #{deletable_reservation.court_id} will be deleted #{deletable_reservation.open_court ? "open" : "closed"} Would you like to delete it")
+
+           if delete
+                deletable_reservation.destroy
+            end
         end
-
 end
