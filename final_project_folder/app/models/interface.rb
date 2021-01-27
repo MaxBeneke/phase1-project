@@ -1,6 +1,6 @@
 class Interface
 
-  
+  puts "Hey"
     attr_reader :prompt
     attr_accessor :user
 
