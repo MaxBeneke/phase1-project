@@ -16,12 +16,6 @@ task :start do
   interface.welcome
 end
 
-desc "start our app"
-task :start do
-  app = CourtReserver.new
-  app.run
-end
-
 namespace :remind_me_about do
 
   desc "🎁 process for adding a new table"

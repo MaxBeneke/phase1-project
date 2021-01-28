@@ -52,7 +52,6 @@ class Interface
 
     def user_sign_up_helper
         system 'clear'
-        self.user.reload
 
         username = prompt.ask("Enter username: ")
         while User.find_by(username: username)
@@ -109,7 +108,7 @@ class Interface
         Reservation.create(user_id: self.user.id, court_id: court_number, open_court: open_court)
 
         puts "You're all set for court #{court_number}."
-        sleep(2.0)
+        sleep(1.0)
         reservation_screen
     end
 
@@ -200,7 +199,7 @@ class Interface
         end
 
         if update && updatable_reservation.secondary_user_id 
-            updatable_reservation.update(secondary_user_id: nil)
+            updatable_reservation.update(secondary_user_id: nil, open_court: true)
         elsif update
             updatable_reservation.open_court ? updatable_reservation.update(open_court: false) : updatable_reservation.update(open_court: true)
         end

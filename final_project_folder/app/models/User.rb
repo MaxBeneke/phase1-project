@@ -9,6 +9,6 @@ class User < ActiveRecord::Base
     end
 
     def joined_reservations
-        Reservation.select{|reservation|reservation.secondary_user_id == self.id}
+        Reservation.where(secondary_user_id: self.id)
     end
 end
