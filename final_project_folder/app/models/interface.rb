@@ -1,5 +1,5 @@
 class Interface
-    
+
     attr_reader :prompt
     attr_accessor :user
 
@@ -132,7 +132,7 @@ class Interface
             menu.choice "Go back", -> {reservation_screen}
          end 
 
-        joined_court.update(open_court: false)
+        joined_court.update(open_court: false, secondary_user_id: user.id)
         
         puts "You've joined #{joined_court.user.username}'s reservation on court #{joined_court.court_id}. Have fun!"
         sleep(2.5)
@@ -147,11 +147,24 @@ class Interface
             puts "You have #{self.user.reservations.count} reservations." 
         else puts "You have 1 reservation."
         end
-
+        
         self.user.reservations.each do |reservation| 
-            puts "Court: #{reservation.court_id} ------------------ This court is #{reservation.open_court ? "open" : "closed"} to other users"
+            opened = "This court is open to other users"
+            if reservation.secondary_user_id
+                closed = "#{reservation.joiner.username} has joined your reservation"
+            else
+                closed = "This court is closed to other users"
+            end
+
+            puts "Court: #{reservation.court_id} ------------------ #{reservation.open_court ? opened : closed}"
         end
 
+        puts ""
+        puts "----- Joined Reservations -----"
+        puts "You've not yet joined any reservations!" if user.joined_reservations == []
+        user.joined_reservations.each do |reservation| 
+            puts "Court: #{reservation.court_id} ------------------ This reservation belongs to #{reservation.user.username}"
+        end
         prompt.select("") do |menu|
             menu.choice "Update reservations", -> {update_reservations}
             menu.choice "Delete reservations", -> {delete_reservations}
@@ -171,19 +184,31 @@ class Interface
 
         updatable_reservation = prompt.select("🎾🎾🎾🎾🎾🎾🎾🎾🎾🎾🎾🎾") do |menu|
             self.user.reservations.each do |reservation|
-            menu.choice "Court: #{reservation.court_id} ----------------- This court is #{reservation.open_court ? "open" : "closed"} to other users.", reservation
+                if reservation.secondary_user_id == nil
+                    menu.choice "Court: #{reservation.court_id} ----------------- This court is #{reservation.open_court ? "open" : "closed"} to other users.", reservation
+                end
+            end
+            user.joined_reservations.each do |reservation| 
+                menu.choice "Court: #{reservation.court_id} ----------------- #{reservation.user.username} owns this reservation", reservation
             end
         end
 
-        update = prompt.yes?("Your reservation at court #{updatable_reservation.court_id} is currently #{updatable_reservation.open_court ? "open" : "closed"} to other users. Would you like to change it?")
-        
-        if update 
+        if updatable_reservation.secondary_user_id && updatable_reservation.secondary_user_id == user.id 
+            update = prompt.yes?("Your reservation at court #{updatable_reservation.court_id} is owned by #{updatable_reservation.user.username}. Would you like to leave?")
+        else
+            update = prompt.yes?("Your reservation at court #{updatable_reservation.court_id} is currently #{updatable_reservation.open_court ? "open" : "closed"} to other users. Would you like to change it?")
+        end
+
+        if update && updatable_reservation.secondary_user_id 
+            updatable_reservation.update(secondary_user_id: nil)
+        elsif update
             updatable_reservation.open_court ? updatable_reservation.update(open_court: false) : updatable_reservation.update(open_court: true)
         end
+        sleep(0.5)
         reservation_checker
     end
          
-        def delete_reservations
+    def delete_reservations
         system 'clear'
         self.user.reload
         if self.user.reservations == []
@@ -191,13 +216,14 @@ class Interface
             sleep(1.5)
             reservation_checker
         end
-    
+
         deletable_reservation = prompt.select("👟👟👟👟👟👟👟👟👟") do |menu|
             self.user.reservations.each do |reservation|
                 menu.choice "Delete reservation for court #{reservation.court_id}.", reservation
-            end  
+            end 
+            menu.choice "Go back", -> {reservation_checker}   
         end
-        
+
         delete = prompt.yes?("Your reservation at court #{deletable_reservation.court_id} will be deleted. Would you like to continue?")
 
         if delete

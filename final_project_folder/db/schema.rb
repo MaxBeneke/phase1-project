@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_25_215831) do
+ActiveRecord::Schema.define(version: 2021_01_28_150925) do
 
   create_table "courts", force: :cascade do |t|
     t.string "name"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2021_01_25_215831) do
     t.integer "user_id"
     t.integer "court_id"
     t.boolean "open_court"
+    t.integer "secondary_user_id"
   end
 
   create_table "users", force: :cascade do |t|
