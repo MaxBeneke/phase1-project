@@ -30,7 +30,7 @@ Just run 'bundle' in your terminal to install all the gems. When you're ready to
 
 ## Known Issues
 
-The main issue we currently have is that, while our users can join a reservation and close said reservation to other users, the joining user cannot currently view this reservation as a 'joiner'. Similarly, the joined user cannot see who joined. We hope to add this update soon. 
+Our biggest issue we hope to fix is adding a timeslot indicator so that the user can know what time they are signing up for as well as what court. Therefore, two users would not be able to sign up for the same court at the same time.
 
 ## License
 
